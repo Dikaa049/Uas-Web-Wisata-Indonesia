@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { authenticate } from "@/libs/auth/action";
+import { registerUser } from "@/libs/auth/action";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function SignUpPage() {
   const [error, setError] = useState("");
 
   const clientAction = async (formData) => {
-    const result = await authenticate(formData);
+    const result = await registerUser(formData);
 
     if (result) {
       setError(result);
@@ -22,10 +22,18 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
 
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Login
+            Sign Up
           </h2>
 
           <form action={clientAction} className="flex flex-col gap-5">
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Nama Lengkap"
+              required
+              className="w-full border p-3 rounded"
+            />
 
             <input
               type="text"
@@ -49,16 +57,16 @@ export default function LoginPage() {
               </p>
             )}
 
-            <SubmitButton text="Login" />
+            <SubmitButton text="Sign Up" />
           </form>
 
           <p className="mt-5 text-center">
-            Belum punya akun?{" "}
+            Sudah punya akun?{" "}
             <Link
-              href="/signup"
+              href="/login"
               className="text-blue-600"
             >
-              DAFTAR DI SINI
+              LOGIN DI SINI
             </Link>
           </p>
 
