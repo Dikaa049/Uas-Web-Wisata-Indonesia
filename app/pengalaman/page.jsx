@@ -1,18 +1,28 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react"; // 1. Tambahkan useEffect
 import Link from "next/link";
 
 export default function PengalamanPage() {
   const videoPlaylist = [
     "/gunung bromo.mp4",
     "/Taman Nasional Gunung Leuser - Banda Aceh.mp4",
-    "/Ngarai Sianok – Sumatera Barat.mp4",
+    "/Ngarai Sianok-Sumatera Barat.mp4",
     "/danau toba.mp4",
   ];
 
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef(null);
+
+  // 2. Tambahkan useEffect agar video otomatis memuat ulang dan berputar saat index berubah
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.load(); // Memuat ulang video baru
+      videoRef.current.play().catch((err) => {
+        console.log("Autoplay dicegah oleh browser:", err);
+      });
+    }
+  }, [currentVideoIndex]);
 
   const handleVideoEnded = () => {
     setCurrentVideoIndex((prevIndex) => {
@@ -239,16 +249,16 @@ export default function PengalamanPage() {
       {/* ==================== 1. HERO BANNER ==================== */}
       <section className="relative h-[650px] w-full overflow-hidden bg-gray-900 flex flex-col justify-center items-center text-white px-4">
         <div className="absolute inset-0 z-0">
+          {/* 3. PERBAIKAN: Pindahkan src langsung ke elemen video, hapus tag <source> */}
           <video
             ref={videoRef}
+            src={videoPlaylist[currentVideoIndex]}
             autoPlay
             muted
             playsInline
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover opacity-75"
-          >
-            <source src={videoPlaylist[currentVideoIndex]} type="video/mp4" />
-          </video>
+          />
           <div className="absolute inset-0 bg-black/40"></div>
         </div>
 
@@ -431,7 +441,6 @@ export default function PengalamanPage() {
         className="py-16 px-6 bg-cover bg-center bg-no-repeat relative"
         style={{ backgroundImage: "url('/kepulauan derawan.webp')" }}
       >
-        {/* Layer Gelap (Overlay) agar teks & card komentar lebih terbaca kontras */}
         <div className="absolute inset-0 bg-black/40 z-0"></div>
 
         <div className="max-w-7xl mx-auto relative z-10">
@@ -451,7 +460,6 @@ export default function PengalamanPage() {
                 className="bg-white/95 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20 flex flex-col justify-between"
               >
                 <div>
-                  {/* Header Profil Komentar */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-teal-700 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
@@ -469,18 +477,15 @@ export default function PengalamanPage() {
                     </div>
                   </div>
 
-                  {/* Rating Bintang */}
                   <div className="flex text-amber-400 text-xs mb-3">
                     {"★".repeat(rev.rating)}
                   </div>
 
-                  {/* Isi Teks Komentar */}
                   <p className="text-gray-600 text-xs italic leading-relaxed mb-6">
                     {rev.text}
                   </p>
                 </div>
 
-                {/* Badge Penanda API */}
                 <div className="pt-2 border-t border-gray-100 flex items-center">
                   <span className="text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md tracking-wider">
                     WisataReview API
